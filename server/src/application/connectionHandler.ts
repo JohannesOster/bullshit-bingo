@@ -1,7 +1,7 @@
 import db from 'infrastructure/db';
-import {Socket} from 'socket.io';
+import {SocketServer} from 'infrastructure/sockets';
 
-export const onConnection = (socket: Socket) => {
+export const onConnection = ({socket}: SocketServer) => {
   const user = db.users.create(socket.handshake.query.username as string);
   socket.broadcast.emit('userJoined', {user});
   socket.emit('words', {words: db.words.list()});

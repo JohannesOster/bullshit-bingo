@@ -30,6 +30,12 @@ const App = () => {
       setUsers(users => [...users, user]);
     });
 
+    socket.on('words', (words: any) => {
+      console.log(words);
+    });
+
+    socket.emit('claim', 'Apfel');
+
     return () => {
       socket.close();
     };
