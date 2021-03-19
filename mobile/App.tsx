@@ -16,9 +16,11 @@ const App = () => {
       jsonp: false,
       query: {username},
     });
+
     socket.on('error', (err: any) => {
       console.debug('SOCKET: errors ', err);
     });
+
     socket.on('connect_error', (err: any) => {
       console.debug('SOCKET: connect_error ---> ', err);
     });
@@ -27,13 +29,19 @@ const App = () => {
       console.log('new user joined', user);
       setUsers(users => [...users, user]);
     });
+
+    return () => {
+      socket.close();
+    };
   }, []);
 
   return (
     <SafeAreaView>
       <StatusBar />
-      <Text>asdf</Text>
-      <Text>{Platform.select({ios: 'Appleboy', android: 'Googleboy'})}</Text>
+      <Text>
+        Hey my username is:{' '}
+        {Platform.select({ios: 'Appleboy', android: 'Googleboy'})}
+      </Text>
       {users.map((user, idx) => {
         return (
           <Text key={idx}>
