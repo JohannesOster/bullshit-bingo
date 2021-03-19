@@ -1,13 +1,7 @@
 import {createServer as createHTTPServer} from 'http';
-import connectRoutes from './sockets/socket.routes';
-import {onConnection} from 'application/connectionHandler';
 import createSocketServer from './sockets';
 
-const app = createHTTPServer();
+const server = createHTTPServer();
+createSocketServer(server);
 
-createSocketServer(app).then((server) => {
-  onConnection(server);
-  connectRoutes(server);
-});
-
-export default app;
+export default server;
