@@ -10,7 +10,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@types/socket.io": "^2.1.13",
+    "native-base": "^2.15.2",
     "react": "17.0.1",
     "react-native": "0.64.0",
     "socket.io-client": "^4.0.0"
