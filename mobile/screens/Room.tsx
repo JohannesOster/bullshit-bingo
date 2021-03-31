@@ -60,13 +60,12 @@ export const Room = ({route}) => {
           <ListItem itemDivider>
             <Text>Benutzer</Text>
           </ListItem>
-          <ListItem>
-            <Text>{username} (Ich)</Text>
-          </ListItem>
           {users.map((user, idx) => {
             return (
               <ListItem>
-                <Text key={idx}>{user.username} joined.</Text>
+                <Text key={idx}>
+                  {user.username} {user.username === username && '(Ich)'}
+                </Text>
               </ListItem>
             );
           })}

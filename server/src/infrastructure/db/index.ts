@@ -1,5 +1,5 @@
 type User = {username: string};
-type Word = {word: string; status: string, claimedBy?: string};
+type Word = {word: string; status: string; claimedBy?: string};
 
 const users: User[] = [];
 const words: Word[] = [
@@ -15,17 +15,22 @@ const db = {
       return user;
     },
     list: () => users,
+    del: (username: string) => {
+      const idx = users.findIndex((elem) => username === elem.username);
+      if (idx === -1) return;
+      users.splice(idx, 1);
+    },
   },
   words: {
     list: () => words,
     claim: (word: string, by: string) => {
       words.forEach((_word) => {
         if (_word.word !== word) return;
-              _word.status = 'claimed';
-              _word.claimedBy = by;
+        _word.status = 'claimed';
+        _word.claimedBy = by;
       });
     },
-  }
+  },
 };
 
 export default db;
