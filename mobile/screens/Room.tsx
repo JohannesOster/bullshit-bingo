@@ -19,8 +19,6 @@ export const Room = ({route}) => {
   const {username} = route.params;
 
   useEffect(() => {
-    console.log('rerender');
-
     const s = socketIOClient('http://192.168.8.133:3000', {
       secure: true,
       transports: ['websocket'],
@@ -96,26 +94,6 @@ export const Room = ({route}) => {
             );
           })}
         </List>
-
-        <Content style={{marginTop: 200}}>
-          <Grid>
-            <Row>
-              <Button primary style={{marginBottom: 20}}>
-                <Text>Open for claim</Text>
-              </Button>
-            </Row>
-            <Row>
-              <Button info style={{marginBottom: 20}}>
-                <Text>Claimed by you</Text>
-              </Button>
-            </Row>
-            <Row>
-              <Button light disabled>
-                <Text>Claim by someone else</Text>
-              </Button>
-            </Row>
-          </Grid>
-        </Content>
       </Container>
     </SafeAreaView>
   );

@@ -19,6 +19,11 @@ const db = {
       const idx = users.findIndex((elem) => username === elem.username);
       if (idx === -1) return;
       users.splice(idx, 1);
+
+      words.forEach((word) => {
+        if (word.claimedBy !== username) return;
+        (word.claimedBy = undefined), (word.status = 'open');
+      });
     },
   },
   words: {
