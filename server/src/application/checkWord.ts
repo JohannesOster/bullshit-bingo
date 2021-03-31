@@ -4,5 +4,5 @@ import {SocketEvent} from 'infrastructure/sockets/events';
 
 export const check = (server: SocketServer, word: string) => {
   db.words.check(word, server.socket.handshake.query.username as string);
-  server.socketIOServer.emit(SocketEvent.check, {word});
+  server.socket.broadcast.emit(SocketEvent.check, {word});
 };

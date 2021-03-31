@@ -59,15 +59,11 @@ export const Room = ({route, navigation}) => {
     s.on('check', ({word}: any) => {
       Alert.alert('Alert Title', 'My Alert Msg', [
         {
-          text: 'Ask me later',
-          onPress: () => console.log('Ask me later pressed'),
-        },
-        {
-          text: 'Cancel',
+          text: 'Nein',
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
+        {text: 'Ja', onPress: () => console.log('OK Pressed')},
       ]);
     });
 
