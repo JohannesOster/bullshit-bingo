@@ -42,6 +42,13 @@ const db = {
         _word.claimedBy = by;
       });
     },
+    check: (word: string, by: string) => {
+      words.forEach((_word) => {
+        if (_word.claimedBy !== by || _word.word !== word) return;
+        delete _word.claimedBy;
+        _word.status = 'check';
+      });
+    },
   },
 };
 

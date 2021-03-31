@@ -1,15 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {StatusBar, Text, SafeAreaView} from 'react-native';
+import {Text, SafeAreaView, Alert} from 'react-native';
 import socketIOClient from 'socket.io-client';
-import {
-  Button,
-  Container,
-  Content,
-  Grid,
-  List,
-  ListItem,
-  Row,
-} from 'native-base';
+import {Button, Container, List, ListItem} from 'native-base';
 
 export const Room = ({route, navigation}) => {
   const [users, setUsers] = useState([] as any[]);
@@ -20,20 +12,23 @@ export const Room = ({route, navigation}) => {
 
   useEffect(() => {
     if (!claimedWord) {
-      console.log(claimedWord);
       navigation.setOptions({
         headerRight: () => {},
       });
     } else {
       navigation.setOptions({
         headerRight: () => (
-          <Button onPress={() => console.log('I want it')}>
-            <Text>I want it too</Text>
+          <Button
+            onPress={() => socket.emit('check', claimedWord)}
+            transparent
+            hasText
+            style={{marginHorizontal: 15}}>
+            <Text>Gesagt!</Text>
           </Button>
         ),
       });
     }
-  }, [claimedWord, navigation]);
+  }, [claimedWord, navigation, socket]);
 
   useEffect(() => {
     const s = socketIOClient('http://192.168.8.133:3000', {
@@ -58,8 +53,22 @@ export const Room = ({route, navigation}) => {
     });
 
     s.on('words', ({words}: any) => {
-      console.log(words);
       setWords(words);
+    });
+
+    s.on('check', ({word}: any) => {
+      Alert.alert('Alert Title', 'My Alert Msg', [
+        {
+          text: 'Ask me later',
+          onPress: () => console.log('Ask me later pressed'),
+        },
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
     });
 
     return () => {
@@ -70,7 +79,6 @@ export const Room = ({route, navigation}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <Container>
-        <StatusBar />
         <List>
           <ListItem itemDivider>
             <Text>Benutzer</Text>
@@ -94,7 +102,9 @@ export const Room = ({route, navigation}) => {
                 onPress={() => {
                   if (status === 'claimed') {
                     if (claimedBy !== username) return;
+                    socket.emit('claim', word);
                     setClaimedWord(null);
+                    return;
                   }
                   socket.emit('claim', word);
                   setClaimedWord(word);

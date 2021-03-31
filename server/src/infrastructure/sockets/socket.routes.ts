@@ -1,8 +1,9 @@
 import {claim} from 'application/claimWord';
+import {check} from 'application/checkWord';
 import {SocketServer} from '.';
 
 type Route = (server: SocketServer, ...args: any[]) => void;
-const routes = {claim} as {[event: string]: Route};
+const routes = {claim, check} as {[event: string]: Route};
 
 const connectRoutes = (server: SocketServer) => {
   Object.entries(routes).forEach(([event, listener]) => {
