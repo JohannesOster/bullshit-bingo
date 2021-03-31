@@ -31,6 +31,12 @@ const db = {
     list: () => words,
     claim: (word: string, by: string) => {
       words.forEach((_word) => {
+        if (_word.claimedBy === by) {
+          delete _word.claimedBy;
+          _word.status = 'open';
+          return;
+        }
+
         if (_word.word !== word) return;
         _word.status = 'claimed';
         _word.claimedBy = by;

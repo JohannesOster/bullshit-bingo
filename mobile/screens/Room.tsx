@@ -11,12 +11,29 @@ import {
   Row,
 } from 'native-base';
 
-export const Room = ({route}) => {
+export const Room = ({route, navigation}) => {
   const [users, setUsers] = useState([] as any[]);
   const [words, setWords] = useState([] as any[]);
   const [socket, setSocket] = useState(null as any);
-
   const {username} = route.params;
+  const [claimedWord, setClaimedWord] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!claimedWord) {
+      console.log(claimedWord);
+      navigation.setOptions({
+        headerRight: () => {},
+      });
+    } else {
+      navigation.setOptions({
+        headerRight: () => (
+          <Button onPress={() => console.log('I want it')}>
+            <Text>I want it too</Text>
+          </Button>
+        ),
+      });
+    }
+  }, [claimedWord, navigation]);
 
   useEffect(() => {
     const s = socketIOClient('http://192.168.8.133:3000', {
@@ -50,7 +67,6 @@ export const Room = ({route}) => {
     };
   }, [username]);
 
-  console.log(words);
   return (
     <SafeAreaView style={{flex: 1}}>
       <Container>
@@ -76,8 +92,12 @@ export const Room = ({route}) => {
               <ListItem
                 key={idx}
                 onPress={() => {
-                  if (status === 'claimed' && claimedBy !== 'username') return;
+                  if (status === 'claimed') {
+                    if (claimedBy !== username) return;
+                    setClaimedWord(null);
+                  }
                   socket.emit('claim', word);
+                  setClaimedWord(word);
                 }}
                 style={{
                   backgroundColor:
