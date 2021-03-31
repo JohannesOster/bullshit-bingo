@@ -1,5 +1,5 @@
 type User = {username: string};
-type Word = {word: string; status: string};
+type Word = {word: string; status: string, claimedBy?: string};
 
 const users: User[] = [];
 const words: Word[] = [
@@ -17,12 +17,14 @@ const db = {
   },
   words: {
     list: () => words,
-    updateStatus: (word: string, status: string) =>
+    claim: (word: string, by: string) => {
       words.forEach((_word) => {
         if (_word.word !== word) return;
-        _word.status = status;
-      }),
-  },
+              _word.status = 'claimed';
+              _word.claimedBy = by;
+      });
+    },
+  }
 };
 
 export default db;
