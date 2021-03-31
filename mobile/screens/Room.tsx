@@ -50,6 +50,7 @@ export const Room = ({route}) => {
     };
   }, [username]);
 
+  console.log(words);
   return (
     <SafeAreaView style={{flex: 1}}>
       <Container>

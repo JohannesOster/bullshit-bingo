@@ -20,7 +20,7 @@ const createSocketServer = (httpServer: HttpServer) => {
     socket.on('disconnect', () => {
       db.users.del(socket.handshake.query.username as string);
       socket.broadcast.emit(SocketEvent.users, {users: db.users.list()});
-      socket.broadcast.emit(SocketEvent.words, {users: db.words.list()});
+      socket.broadcast.emit(SocketEvent.words, {words: db.words.list()});
     });
   });
 };
