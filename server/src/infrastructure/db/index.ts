@@ -22,7 +22,7 @@ const db = {
 
       words.forEach((word) => {
         if (word.claimedBy !== username) return;
-        word.claimedBy = undefined;
+        delete word.claimedBy;
         word.status = 'open';
       });
     },
