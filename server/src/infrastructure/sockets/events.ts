@@ -1,4 +1,4 @@
 export enum SocketEvent {
-  userJoined = 'userJoined',
+  users = 'users',
   words = 'words',
 }

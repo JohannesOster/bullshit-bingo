@@ -14,6 +14,7 @@ const db = {
       users.push(user);
       return user;
     },
+    list: () => users,
   },
   words: {
     list: () => words,
