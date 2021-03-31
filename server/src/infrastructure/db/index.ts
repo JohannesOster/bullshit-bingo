@@ -22,7 +22,8 @@ const db = {
 
       words.forEach((word) => {
         if (word.claimedBy !== username) return;
-        (word.claimedBy = undefined), (word.status = 'open');
+        word.claimedBy = undefined;
+        word.status = 'open';
       });
     },
   },
