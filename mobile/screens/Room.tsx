@@ -1,7 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {Text, SafeAreaView, Alert} from 'react-native';
 import socketIOClient from 'socket.io-client';
-import {Button, Container, List, ListItem} from 'native-base';
+import {
+  Button,
+  Container,
+  List,
+  ListItem,
+  ScrollableTab,
+  Tab,
+  Tabs,
+} from 'native-base';
 
 export const Room = ({route, navigation}) => {
   const [users, setUsers] = useState([] as any[]);
@@ -57,7 +65,7 @@ export const Room = ({route, navigation}) => {
     });
 
     s.on('check', ({word}: any) => {
-      Alert.alert('Alert Title', 'My Alert Msg', [
+      Alert.alert('Check Wort', `${word} wurde angefragt oder so?`, [
         {
           text: 'Nein',
           onPress: () => console.log('Cancel Pressed'),
@@ -75,52 +83,66 @@ export const Room = ({route, navigation}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <Container>
-        <List>
-          <ListItem itemDivider>
-            <Text>Benutzer</Text>
-          </ListItem>
-          {users.map((user, idx) => {
-            return (
+        <Tabs renderTabBar={() => <ScrollableTab />}>
+          <Tab heading="Tab1">
+            <List>
+              <ListItem itemDivider>
+                <Text>Benutzer</Text>
+              </ListItem>
+              {users
+                .sort((a, b) => (a.score > b.score ? -1 : 1))
+                .map((user, idx) => {
+                  return (
+                    <ListItem>
+                      <Text key={idx}>
+                        {user.username} {user.username === username && '(Ich)'}{' '}
+                        - {user.score}
+                      </Text>
+                    </ListItem>
+                  );
+                })}
+              <ListItem itemDivider>
+                <Text>Worte</Text>
+              </ListItem>
+              {words.map(({word, status, claimedBy}, idx) => {
+                return (
+                  <ListItem
+                    key={idx}
+                    onPress={() => {
+                      if (status === 'claimed') {
+                        if (claimedBy !== username) return;
+                        socket.emit('claim', word);
+                        setClaimedWord(null);
+                        return;
+                      }
+                      socket.emit('claim', word);
+                      setClaimedWord(word);
+                    }}
+                    style={{
+                      backgroundColor:
+                        status === 'claimed'
+                          ? claimedBy === username
+                            ? 'green'
+                            : 'yellow'
+                          : 'blue',
+                    }}
+                    noIndent>
+                    <Text>
+                      {word} - status: {status}
+                    </Text>
+                  </ListItem>
+                );
+              })}
+            </List>
+          </Tab>
+          <Tab heading="Scoreboard">
+            <List>
               <ListItem>
-                <Text key={idx}>
-                  {user.username} {user.username === username && '(Ich)'}
-                </Text>
+                <Text>Well i am not the best</Text>
               </ListItem>
-            );
-          })}
-          <ListItem itemDivider>
-            <Text>Worte</Text>
-          </ListItem>
-          {words.map(({word, status, claimedBy}, idx) => {
-            return (
-              <ListItem
-                key={idx}
-                onPress={() => {
-                  if (status === 'claimed') {
-                    if (claimedBy !== username) return;
-                    socket.emit('claim', word);
-                    setClaimedWord(null);
-                    return;
-                  }
-                  socket.emit('claim', word);
-                  setClaimedWord(word);
-                }}
-                style={{
-                  backgroundColor:
-                    status === 'claimed'
-                      ? claimedBy === username
-                        ? 'green'
-                        : 'yellow'
-                      : 'blue',
-                }}
-                noIndent>
-                <Text>
-                  {word} - status: {status}
-                </Text>
-              </ListItem>
-            );
-          })}
-        </List>
+            </List>
+          </Tab>
+        </Tabs>
       </Container>
     </SafeAreaView>
   );

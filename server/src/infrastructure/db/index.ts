@@ -1,4 +1,4 @@
-type User = {username: string};
+type User = {username: string; score: number};
 type Word = {word: string; status: string; claimedBy?: string};
 
 const users: User[] = [];
@@ -10,7 +10,7 @@ const words: Word[] = [
 const db = {
   users: {
     create: (username: string) => {
-      const user = {username};
+      const user = {username, score: 0};
       users.push(user);
       return user;
     },
