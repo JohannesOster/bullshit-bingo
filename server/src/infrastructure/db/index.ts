@@ -1,10 +1,15 @@
 type User = {username: string; score: number};
-type Word = {word: string; status: string; claimedBy?: string};
+type Word = {
+  word: string;
+  status: string;
+  claimedBy?: string;
+  checkStatus: number;
+};
 
 const users: User[] = [];
 const words: Word[] = [
-  {word: 'Apfel', status: 'open'},
-  {word: 'Fischlaich', status: 'open'},
+  {word: 'Apfel', status: 'open', checkStatus: 1}, // if no one checks player gets point
+  {word: 'Fischlaich', status: 'open', checkStatus: 1},
 ];
 
 const db = {
@@ -24,6 +29,12 @@ const db = {
         if (word.claimedBy !== username) return;
         delete word.claimedBy;
         word.status = 'open';
+      });
+    },
+    updateScore: (username: string, operand: number) => {
+      users.forEach((user) => {
+        if (user.username !== username) return;
+        user.score += operand;
       });
     },
   },
@@ -48,6 +59,16 @@ const db = {
         delete _word.claimedBy;
         _word.status = 'check';
       });
+    },
+    updateCheckStatus: (word: string, operand: number) => {
+      words.forEach((_word) => {
+        if (_word.word !== word) return;
+        _word.checkStatus += operand;
+      });
+    },
+    getCheckStatus: (word: string) => {
+      const _word = words.find((elem) => elem.word === word);
+      return _word?.checkStatus || 0;
     },
   },
 };

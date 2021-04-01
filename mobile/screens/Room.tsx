@@ -133,10 +133,22 @@ export const Room = ({route, navigation}) => {
               flexDirection: 'row',
               marginTop: 12,
             }}>
-            <Button success style={{padding: 12}}>
+            <Button
+              success
+              style={{padding: 12}}
+              onPress={() => {
+                socket.emit('accept', {word: showToast});
+                setShowToast(null);
+              }}>
               <Text>Jawoll</Text>
             </Button>
-            <Button danger style={{padding: 12}}>
+            <Button
+              danger
+              style={{padding: 12}}
+              onPress={() => {
+                socket.emit('discard', {word: showToast});
+                setShowToast(null);
+              }}>
               <Text>Ne haste nich</Text>
             </Button>
           </View>
