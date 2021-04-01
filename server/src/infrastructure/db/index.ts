@@ -45,6 +45,7 @@ const db = {
         if (_word.word !== word) return;
         delete _word.claimedBy;
         _word.status = 'open';
+        _word.checkStatus = 1;
       });
     },
     claim: (word: string, by: string) => {
