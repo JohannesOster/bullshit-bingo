@@ -1,15 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Text, SafeAreaView, Alert} from 'react-native';
+import {Text, SafeAreaView} from 'react-native';
 import socketIOClient from 'socket.io-client';
-import {
-  Button,
-  Container,
-  List,
-  ListItem,
-  ScrollableTab,
-  Tab,
-  Tabs,
-} from 'native-base';
+import {Button, Container, List, ListItem, View} from 'native-base';
 
 export const Room = ({route, navigation}) => {
   const [users, setUsers] = useState([] as any[]);
@@ -17,6 +9,7 @@ export const Room = ({route, navigation}) => {
   const [socket, setSocket] = useState(null as any);
   const {username} = route.params;
   const [claimedWord, setClaimedWord] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState<string | null>(null);
 
   useEffect(() => {
     if (!claimedWord) {
@@ -65,14 +58,11 @@ export const Room = ({route, navigation}) => {
     });
 
     s.on('check', ({word}: any) => {
-      Alert.alert('Check Wort', `${word} wurde angefragt oder so?`, [
-        {
-          text: 'Nein',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {text: 'Ja', onPress: () => console.log('OK Pressed')},
-      ]);
+      setShowToast(word);
+      setTimeout(() => {
+        setShowToast(null);
+        // emit not checkd
+      }, 3000);
     });
 
     return () => {
@@ -83,67 +73,75 @@ export const Room = ({route, navigation}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <Container>
-        <Tabs renderTabBar={() => <ScrollableTab />}>
-          <Tab heading="Tab1">
-            <List>
-              <ListItem itemDivider>
-                <Text>Benutzer</Text>
+        <List>
+          <ListItem itemDivider>
+            <Text>Benutzer</Text>
+          </ListItem>
+          {users
+            .sort((a, b) => (a.score > b.score ? -1 : 1))
+            .map((user, idx) => {
+              return (
+                <ListItem key={idx}>
+                  <Text>
+                    {user.username} {user.username === username && '(Ich)'} -{' '}
+                    {user.score}
+                  </Text>
+                </ListItem>
+              );
+            })}
+          <ListItem itemDivider>
+            <Text>Worte</Text>
+          </ListItem>
+          {words.map(({word, status, claimedBy}, idx) => {
+            return (
+              <ListItem
+                key={idx}
+                onPress={() => {
+                  if (status === 'claimed') {
+                    if (claimedBy !== username) return;
+                    socket.emit('claim', word);
+                    setClaimedWord(null);
+                    return;
+                  }
+                  socket.emit('claim', word);
+                  setClaimedWord(word);
+                }}
+                style={{
+                  backgroundColor:
+                    status === 'claimed'
+                      ? claimedBy === username
+                        ? 'green'
+                        : 'yellow'
+                      : 'transparent',
+                }}
+                noIndent>
+                <Text>
+                  {word} - status: {status}
+                </Text>
               </ListItem>
-              {users
-                .sort((a, b) => (a.score > b.score ? -1 : 1))
-                .map((user, idx) => {
-                  return (
-                    <ListItem>
-                      <Text key={idx}>
-                        {user.username} {user.username === username && '(Ich)'}{' '}
-                        - {user.score}
-                      </Text>
-                    </ListItem>
-                  );
-                })}
-              <ListItem itemDivider>
-                <Text>Worte</Text>
-              </ListItem>
-              {words.map(({word, status, claimedBy}, idx) => {
-                return (
-                  <ListItem
-                    key={idx}
-                    onPress={() => {
-                      if (status === 'claimed') {
-                        if (claimedBy !== username) return;
-                        socket.emit('claim', word);
-                        setClaimedWord(null);
-                        return;
-                      }
-                      socket.emit('claim', word);
-                      setClaimedWord(word);
-                    }}
-                    style={{
-                      backgroundColor:
-                        status === 'claimed'
-                          ? claimedBy === username
-                            ? 'green'
-                            : 'yellow'
-                          : 'blue',
-                    }}
-                    noIndent>
-                    <Text>
-                      {word} - status: {status}
-                    </Text>
-                  </ListItem>
-                );
-              })}
-            </List>
-          </Tab>
-          <Tab heading="Scoreboard">
-            <List>
-              <ListItem>
-                <Text>Well i am not the best</Text>
-              </ListItem>
-            </List>
-          </Tab>
-        </Tabs>
+            );
+          })}
+        </List>
       </Container>
+      {showToast && (
+        <View style={{padding: 12}}>
+          <Text>HeyHow - ich hab '{showToast}' gesagt!</Text>
+          <View
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              marginTop: 12,
+            }}>
+            <Button success style={{padding: 12}}>
+              <Text>Jawoll</Text>
+            </Button>
+            <Button danger style={{padding: 12}}>
+              <Text>Ne haste nich</Text>
+            </Button>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
