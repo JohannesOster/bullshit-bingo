@@ -137,7 +137,7 @@ export const Room = ({route, navigation}) => {
               success
               style={{padding: 12}}
               onPress={() => {
-                socket.emit('accept', {word: showToast});
+                socket.emit('accept', showToast);
                 setShowToast(null);
               }}>
               <Text>Jawoll</Text>
@@ -146,7 +146,7 @@ export const Room = ({route, navigation}) => {
               danger
               style={{padding: 12}}
               onPress={() => {
-                socket.emit('discard', {word: showToast});
+                socket.emit('discard', showToast);
                 setShowToast(null);
               }}>
               <Text>Ne haste nich</Text>

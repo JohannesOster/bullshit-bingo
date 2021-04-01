@@ -6,6 +6,5 @@ export const accept = (server: SocketServer, word: string) => {
 };
 
 export const discard = (server: SocketServer, word: string) => {
-  console.log('Discard');
   db.words.updateCheckStatus(word, -1);
 };
