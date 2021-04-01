@@ -35,6 +35,7 @@ const db = {
       users.forEach((user) => {
         if (user.username !== username) return;
         user.score += operand;
+        console.log(operand, user.score);
       });
     },
   },
@@ -64,6 +65,7 @@ const db = {
       words.forEach((_word) => {
         if (_word.word !== word) return;
         _word.checkStatus += operand;
+        console.log(operand, _word.checkStatus);
       });
     },
     getCheckStatus: (word: string) => {
