@@ -40,6 +40,13 @@ const db = {
   },
   words: {
     list: () => words,
+    setOpen: (word: string) => {
+      words.forEach((_word) => {
+        if (_word.word !== word) return;
+        delete _word.claimedBy;
+        _word.status = 'open';
+      });
+    },
     claim: (word: string, by: string) => {
       words.forEach((_word) => {
         if (_word.claimedBy === by) {

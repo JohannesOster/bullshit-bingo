@@ -9,6 +9,7 @@ export const check = (server: SocketServer, word: string) => {
   setTimeout(() => {
     const status = db.words.getCheckStatus(word);
     db.users.updateScore(username, status > 0 ? 1 : -1);
+    db.words.setOpen(word);
     server.socketIOServer.emit(SocketEvent.users, {users: db.users.list()});
     server.socketIOServer.emit(SocketEvent.words, {
       words: db.words.list(),
