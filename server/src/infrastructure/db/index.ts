@@ -65,7 +65,7 @@ const db = {
       words.forEach((_word) => {
         if (_word.word !== word) return;
         _word.checkStatus += operand;
-        console.log(operand, _word.checkStatus);
+        console.log(operand, _word.checkStatus, 1 + -1);
       });
     },
     getCheckStatus: (word: string) => {
